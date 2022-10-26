@@ -19,7 +19,8 @@ const styles = StyleSheet.create({
   },
   contentBox: {
     flex: 1,
-    width:  windowWidth-(windowWidth/4),
+    width:  windowWidth,
+    height: 200,
 
     justifyContent:'center',
     alignItems: 'center'

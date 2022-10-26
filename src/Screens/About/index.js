@@ -13,7 +13,7 @@ const About = ({navigation, route}) => {
         <View style={styles.content}>
       
       <Text style={styles.text}>This does nothing, it's just text</Text>
-      <Text style={styles.text}>(But it does feel kinda empty without the bottom tab here, doesn't it?)</Text>
+
       </View>
       <View>
       <Button title="Go to the Next Screen" onPress={handleNextScreen} />

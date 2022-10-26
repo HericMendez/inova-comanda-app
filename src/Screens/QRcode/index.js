@@ -6,31 +6,46 @@ import {
   TouchableOpacity,
   Alert,
   Linking,
+  Dimensions,
 } from "react-native";
-import { BarCodeScanner } from "expo-barcode-scanner";
+
 import { Camera } from "expo-camera";
 import * as Clipboard from "expo-clipboard";
 import styles from "./style";
+import ReloadButton from "../../Components/Buttons/ReloadButton";
 
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
-const QRcodeReader = ({navigation, route}) => {
+const QRcodeReader = ({ navigation, route }) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [text, setText] = useState("Not yet scanned");
   const [urlIsValid, setUrlIsValid] = useState(false);
-  console.log(route.params)
+  console.log(route.params);
   const askForCameraPermission = () => {
     (async () => {
-      const { status } = await BarCodeScanner.requestPermissionsAsync();
+      const { status } = await Camera.requestCameraPermissionsAsync();
       setHasPermission(status === "granted");
     })();
   };
-
   // Request Camera Permission
   useEffect(() => {
-    askForCameraPermission();
-  }, []);
+    const unsubscribe = navigation.addListener("focus", () => {
+      // do something - for example: reset states, ask for camera permission
+      setScanned(false);
+      setHasPermission(false);
+      (async () => {
+        const { status } = await Camera.requestCameraPermissionsAsync();
+        setHasPermission(status === "granted");
+      })();
+    });
 
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, [navigation]);
+
+  console.log("scanned:  ", route.params);
   // What happens when we scan the bar code
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
@@ -103,17 +118,29 @@ const QRcodeReader = ({navigation, route}) => {
           alignItems: "center",
           justifyContent: "center",
           height: 300,
-          width: 300,
+          width: windowWidth,
           overflow: "hidden",
-          borderRadius: 30,
+
           display: scanned ? "none" : "flex",
         }}
       >
         <Camera
           onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-          style={{ height: 400, width: 400 }}
+          barCodeScannerSettings={{
+            barCodeTypes: ["qr"],
+          }}
+          style={{ height: windowHeight, width: windowWidth }}
         />
       </View>
+      <TouchableOpacity
+        onPress={() => {
+          setScanned(false);
+          setHasPermission(false);
+          console.log("pressed");
+        }}
+      >
+        <ReloadButton size={32} color="#ddd" />
+      </TouchableOpacity>
 
       {scanned && (
         <View style={styles.contentBox}>
@@ -146,6 +173,6 @@ const QRcodeReader = ({navigation, route}) => {
       )}
     </View>
   );
-}
+};
 
-export default QRcodeReader
+export default QRcodeReader;

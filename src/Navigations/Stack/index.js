@@ -5,21 +5,21 @@ import {
 } from "@react-navigation/stack";
 import Home from "../../Screens/Home";
 import About from "../../Screens/About";
-import QRcodeReader from "../../Screens/QRcodeReader";
+import QRcodeReader from "../../Screens/QRcode";
 import styles from "./styles";
+import BottomTab from "../Bottom";
 
-import BottomTab from "../BottomTab";
+
 const Stack = createStackNavigator();
 
 const NavigationStack = () => {
   return (
-    <NavigationContainer>
+    
       <Stack.Navigator initialRouteName="HomeScreen">
-      <Stack.Screen name='Root' component={BottomTab} options={{ headerShown: false }} />
-        <Stack.Group>
+ 
         <Stack.Screen
           name="HomeScreen"
-          component={BottomTab}
+          component={Home}
           options={{
             ...TransitionPresets.SlideFromRightIOS,
             title: "Overview",
@@ -43,9 +43,9 @@ const NavigationStack = () => {
             title: "QR Code Reader",
           }}
         />
-        </Stack.Group>
+        
       </Stack.Navigator>
-    </NavigationContainer>
+ 
   );
 };
 
